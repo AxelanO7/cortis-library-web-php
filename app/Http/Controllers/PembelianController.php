@@ -13,14 +13,21 @@ class PembelianController extends Controller
     //method untuk tampil data pembelian
     public function pembeliantampil()
     {
-        $datapembelian = PembelianModel::prderby('id_pembelian','ASC')
-        ->paginate(5);
+        // PERBAIKAN: prderby menjadi orderBy
+        $datapembelian = PembelianModel::orderBy('id_pembelian', 'ASC')
+            ->paginate(5);
 
         $datapetugas = PetugasModel::all();
         $datanggota = AnggotaModel::all();
-        $databuku = bukuModel::all();
+        // PERBAIKAN: bukuModel menjadi BukuModel
+        $databuku = BukuModel::all();
 
-        return view('halaman/view_pembelian',['pembelian'=>$datapembelian,'petugas'=>$datapetugas,'anggota'=>$datanggota,'buku'=>$databuku])
+        return view('halaman/view_pembelian', [
+            'pembelian' => $datapembelian,
+            'petugas' => $datapetugas,
+            'anggota' => $datanggota,
+            'buku' => $databuku
+        ]);
     }
 
     // ➕ Tambah data pembelian
@@ -34,7 +41,7 @@ class PembelianController extends Controller
             'harga' => 'required'
         ]);
 
-        PembelianModel::create($request->only(['id_petugas', 'id_anggota', 'id_buku', 'qty','harga']));
+        PembelianModel::create($request->only(['id_petugas', 'id_anggota', 'id_buku', 'qty', 'harga']));
 
         return redirect('/pembelian')->with('success', '✅ Data pembelian berhasil ditambahkan.');
     }
@@ -51,7 +58,7 @@ class PembelianController extends Controller
         ]);
 
         $pembelian = PembelianModel::findOrFail($id_pembelian);
-        $pembelian->update($request->only(['id_petugas', 'id_anggota', 'id_buku', 'qty','harga']));
+        $pembelian->update($request->only(['id_petugas', 'id_anggota', 'id_buku', 'qty', 'harga']));
 
         return redirect()->back()->with('success', '✏️ Data pembelian berhasil diperbarui.');
     }
